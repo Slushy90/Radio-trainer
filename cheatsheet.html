@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ham Radio Cheat Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:#c9d1d9;font-family:'Barlow',system-ui,sans-serif;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+@media (prefers-color-scheme:dark){body{background:#0b0f13}}
+.bar{max-width:794px;margin:0 auto;padding-block:14px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar a,.bar button{font:600 14px/1 system-ui,sans-serif;padding:10px 14px;border-radius:999px;border:1px solid #3a424c;background:#1f242b;color:#eef0ef;text-decoration:none;cursor:pointer}
+.pages{max-width:794px;margin:0 auto;padding-bottom:40px;display:flex;flex-direction:column;gap:16px}
+.sheet{width:100%;overflow:hidden;border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.paper{width:794px;height:1123px;transform-origin:0 0}
+@page{size:A4;margin:0}
+@media print{
+  html,body{padding:0;background:#fff} .bar{display:none}
+  .pages{max-width:none;gap:0;padding:0}
+  .sheet{height:auto!important;box-shadow:none;border-radius:0;break-after:page}
+  .paper{transform:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="bar"><span></span><button type="button" onclick="window.print()">Print / save PDF</button></div>
+<main class="pages">
+<section class="sheet" aria-label="Bands and modes"><div class="paper">
+<div style="width: 794px; height: 1123px; box-sizing: border-box; overflow: hidden; background: #F1F4F7; font-family: 'Barlow', system-ui, sans-serif; color: #0E1B2A; display: flex; flex-direction: column;">
+
+  <!-- HEADER -->
+  <div style="position: relative; height: 190px; flex: 0 0 190px; background: #0E1B2A; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 0 36px; box-sizing: border-box;">
+    <svg aria-hidden="true" viewBox="0 0 320 190" width="320" height="190" style="position: absolute; right: 0; top: 0;">
+      <g fill="none" stroke-width="3">
+        <circle cx="320" cy="190" r="44" stroke="#FF7A3D" opacity="0.95"/>
+        <circle cx="320" cy="190" r="88" stroke="#2FC4C6" opacity="0.8"/>
+        <circle cx="320" cy="190" r="132" stroke="#FF7A3D" opacity="0.6"/>
+        <circle cx="320" cy="190" r="176" stroke="#2FC4C6" opacity="0.45"/>
+        <circle cx="320" cy="190" r="220" stroke="#FF7A3D" opacity="0.3"/>
+        <path d="M0 52 Q 20 8 40 52 T 80 52 T 120 52 T 160 52 T 200 52 T 240 52 T 280 52 T 320 52" stroke="#2FC4C6" opacity="0.55" stroke-width="2"/>
+      </g>
+    </svg>
+    <div style="position: relative; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12px; letter-spacing: 0.18em; color: #FF8A52;">UK AMATEUR RADIO · FIELD GUIDE · 1 OF 2</div>
+    <div style="position: relative; font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 900; font-size: 92px; line-height: 0.9; color: #F4F7FA; letter-spacing: 0.01em;">BANDS &amp; MODES</div>
+    <div style="position: relative; font-size: 16px; font-weight: 500; color: #C9D6E2;">Which band, which sideband, which frequency.</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 20px 36px 0 36px; box-sizing: border-box;">
+
+    <!-- RULES OF THUMB -->
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;">
+      <div style="background: #FFC93C; color: #0E1B2A; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-weight: 700; font-size: 12px; letter-spacing: 0.08em;">BELOW 10 MHz</div>
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 900; font-size: 40px; line-height: 1;">LSB</div>
+        <div style="font-weight: 600; font-size: 12.5px;">160 · 80 · 40 m</div>
+      </div>
+      <div style="background: #0B7A7C; color: #FFFFFF; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-weight: 700; font-size: 12px; letter-spacing: 0.08em;">10 MHz AND ABOVE</div>
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 900; font-size: 40px; line-height: 1;">USB</div>
+        <div style="font-weight: 600; font-size: 12.5px;">20 · 17 · 15 · 12 · 10 · 6 m</div>
+      </div>
+      <div style="background: #6B4FBB; color: #FFFFFF; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-weight: 700; font-size: 12px; letter-spacing: 0.08em;">DIGITAL, ANY BAND</div>
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 900; font-size: 40px; line-height: 1;">USB</div>
+        <div style="font-weight: 600; font-size: 12.5px;">FT8 · SSTV · PSK</div>
+      </div>
+      <div style="background: #0E1B2A; color: #FFFFFF; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-weight: 700; font-size: 12px; letter-spacing: 0.08em;">MORSE</div>
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 900; font-size: 40px; line-height: 1;">CW</div>
+        <div style="font-weight: 600; font-size: 12.5px;">Bottom of each band</div>
+      </div>
+    </div>
+
+    <!-- BAND TABLE -->
+    <div style="background: #FFFFFF; border: 1px solid #C4CED8; border-radius: 10px; overflow: hidden;">
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 32px; padding: 0 10px; box-sizing: border-box; background: #0E1B2A; color: #FFFFFF; font-weight: 700; font-size: 12px; letter-spacing: 0.08em;">
+        <div>BAND</div><div>MHz</div><div>MODE</div><div>FT8</div><div>FOUNDATION</div><div>USE IT FOR</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">160m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">1.810–2.000</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #FFC93C; color: #0E1B2A;">LSB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">1.840</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Night band. Needs a big antenna; best in winter.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #F1F5F8; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">80m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">3.500–3.800</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #FFC93C; color: #0E1B2A;">LSB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">3.573</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Evening UK chats and nets. Strong at night.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">60m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">5 MHz channels</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0B7A7C; color: #FFFFFF;">USB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">—</div>
+        <div style="font-weight: 700; font-size: 12px; color: #B3361A;">Full only</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Fixed channels only. Full licence required.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #F1F5F8; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">40m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">7.000–7.200</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #FFC93C; color: #0E1B2A;">LSB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">7.074</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">The all-rounder. UK and Europe by day, DX at night.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">30m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">10.100–10.150</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0E1B2A; color: #FFFFFF;">CW/DATA</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">10.136</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">No voice here. Morse and digital modes only.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #F1F5F8; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">20m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">14.000–14.350</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0B7A7C; color: #FFFFFF;">USB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">14.074</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">The DX band. Worldwide contacts, busiest by day.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">17m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">18.068–18.168</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0B7A7C; color: #FFFFFF;">USB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">18.100</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Quieter DX band. Best in daylight.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #F1F5F8; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">15m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">21.000–21.450</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0B7A7C; color: #FFFFFF;">USB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">21.074</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Daytime DX. Opens up when sunspots are high.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">12m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">24.890–24.990</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0B7A7C; color: #FFFFFF;">USB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">24.915</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Small band. DX on good days.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #F1F5F8; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">10m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">28.000–29.700</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0B7A7C; color: #FFFFFF;">USB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">28.074</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Wild card. FM near the top; global DX at solar peaks.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">6m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">50.000–52.000</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #0B7A7C; color: #FFFFFF;">USB</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">50.313</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">The magic band. Summer sporadic-E skip.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #F1F5F8; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">2m</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">144–146</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #6B4FBB; color: #FFFFFF;">FM</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">144.174</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">Local FM chat and repeaters. SSB is USB.</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 56px 124px 84px 66px 64px 1fr; column-gap: 10px; align-items: center; height: 40px; padding: 0 10px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #DCE3EA;">
+        <div style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 26px; line-height: 1;">70cm</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">430–440</div>
+        <div><span style="display: inline-block; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 12px; letter-spacing: 0.06em; background: #6B4FBB; color: #FFFFFF;">FM</span></div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12.5px;">—</div>
+        <div style="font-weight: 700; font-size: 12px; color: #0B7A7C;">Yes</div>
+        <div style="font-size: 12.5px; line-height: 1.25; color: #33414F;">FM repeaters and simplex. Some area limits apply.</div>
+      </div>
+    </div>
+
+    <!-- HANDY FREQUENCIES -->
+    <div style="background: #FFFFFF; border: 1px solid #C4CED8; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-weight: 700; font-size: 12px; letter-spacing: 0.1em; color: #B3361A;">HANDY FREQUENCIES (MHz)</div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 14px;">
+        <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 12px; font-weight: 600; color: #33414F;">QRP Morse calling</div><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">3.560 · 7.030 · 14.060</div></div>
+        <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 12px; font-weight: 600; color: #33414F;">QRP voice calling</div><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">7.090 · 14.285</div></div>
+        <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 12px; font-weight: 600; color: #33414F;">ISS voice (listen)</div><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">145.800</div></div>
+        <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 12px; font-weight: 600; color: #33414F;">2m FM calling</div><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">145.500</div></div>
+        <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 12px; font-weight: 600; color: #33414F;">2m SSB calling</div><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">144.300</div></div>
+        <div style="display: flex; flex-direction: column; gap: 1px;"><div style="font-size: 12px; font-weight: 600; color: #33414F;">70cm FM calling</div><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px;">433.500</div></div>
+      </div>
+    </div>
+
+    <div style="font-size: 12px; line-height: 1.35; color: #4A5764;">Foundation licence: 25 W maximum. The FT8 column is the dial frequency, set the radio to USB. Band access shown is for the UK Foundation licence at time of writing. Check your own Ofcom licence and the RSGB band plan before transmitting.</div>
+  </div>
+</div>
+</div></section>
+<section class="sheet" aria-label="Ham lingo"><div class="paper">
+<div style="width: 794px; height: 1123px; box-sizing: border-box; overflow: hidden; background: #F1F4F7; font-family: 'Barlow', system-ui, sans-serif; color: #0E1B2A; display: flex; flex-direction: column;">
+
+  <!-- HEADER -->
+  <div style="position: relative; height: 140px; flex: 0 0 140px; background: #0E1B2A; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 0 36px; box-sizing: border-box;">
+    <svg aria-hidden="true" viewBox="0 0 320 140" width="320" height="140" style="position: absolute; right: 0; top: 0;">
+      <g fill="none" stroke-width="3">
+        <circle cx="320" cy="140" r="36" stroke="#FF7A3D" opacity="0.95"/>
+        <circle cx="320" cy="140" r="72" stroke="#2FC4C6" opacity="0.8"/>
+        <circle cx="320" cy="140" r="108" stroke="#FF7A3D" opacity="0.6"/>
+        <circle cx="320" cy="140" r="144" stroke="#2FC4C6" opacity="0.45"/>
+        <circle cx="320" cy="140" r="180" stroke="#FF7A3D" opacity="0.3"/>
+        <path d="M0 40 Q 20 6 40 40 T 80 40 T 120 40 T 160 40 T 200 40 T 240 40 T 280 40 T 320 40" stroke="#2FC4C6" opacity="0.55" stroke-width="2"/>
+      </g>
+    </svg>
+    <div style="position: relative; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12px; letter-spacing: 0.18em; color: #FF8A52;">UK AMATEUR RADIO · FIELD GUIDE · 2 OF 2</div>
+    <div style="position: relative; font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 900; font-size: 78px; line-height: 0.9; color: #F4F7FA; letter-spacing: 0.01em;">HAM LINGO</div>
+    <div style="position: relative; font-size: 16px; font-weight: 500; color: #C9D6E2;">What people actually say on the air.</div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 20px 36px 0 36px; box-sizing: border-box;">
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start;">
+
+      <!-- LEFT: EVERYDAY LINGO -->
+      <div style="background: #FFFFFF; border: 1px solid #C4CED8; border-radius: 10px; overflow: hidden;">
+        <div style="height: 32px; display: flex; align-items: center; padding: 0 12px; background: #0E1B2A; color: #FFFFFF; font-weight: 700; font-size: 12px; letter-spacing: 0.1em;">EVERYDAY LINGO</div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">CQ</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Calling anyone. “Is anybody out there?”</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">CQ DX</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Calling long-distance stations only.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">DE</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">“From” or “this is”, before a callsign.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">K / KN</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Over, go ahead. KN means named station only.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">AR</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">End of message.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">SK</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">End of contact. Signing off.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">73</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Best wishes. The usual goodbye.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">88</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Love and kisses. Friends and family.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">DX</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Long distance. Far-away stations.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">RST</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Signal report: Readability, Strength, Tone.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">59 / 599</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Perfect report. 59 on voice, 599 on Morse.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">GM GA GE</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Good morning, afternoon, evening.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">TNX / TU</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Thanks. Thank you.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">PSE / AGN</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Please. Again, say it again.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">FB</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Fine business. Great, well done.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">OM / YL</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Man / woman operator.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">WX</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Weather.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">SWL</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Shortwave listener. Someone who only listens.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">Shack</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Your radio room. Rig is your radio.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">Elmer</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">A mentor who helps newcomers.</div></div>
+        <div style="display: grid; grid-template-columns: 62px 1fr; column-gap: 8px; align-items: center; min-height: 30px; padding: 4px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #B3361A;">Pile-up</div><div style="font-size: 13px; line-height: 1.25; color: #33414F;">Many stations calling one rare station at once.</div></div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+
+        <!-- Q-CODES -->
+        <div style="background: #FFFFFF; border: 1px solid #C4CED8; border-radius: 10px; overflow: hidden;">
+          <div style="height: 32px; display: flex; align-items: center; padding: 0 12px; background: #0E1B2A; color: #FFFFFF; font-weight: 700; font-size: 12px; letter-spacing: 0.1em;">Q-CODES</div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRL</div><div style="font-size: 13px; color: #33414F;">Is this frequency in use?</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRM</div><div style="font-size: 13px; color: #33414F;">Man-made interference.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRN</div><div style="font-size: 13px; color: #33414F;">Natural static and noise.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRO</div><div style="font-size: 13px; color: #33414F;">Increase power. Running high power.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRP</div><div style="font-size: 13px; color: #33414F;">Low power. 5 W or less.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRS</div><div style="font-size: 13px; color: #33414F;">Send more slowly.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRT</div><div style="font-size: 13px; color: #33414F;">Stop sending. Closing down.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRX</div><div style="font-size: 13px; color: #33414F;">Stand by. Wait a moment.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QRZ</div><div style="font-size: 13px; color: #33414F;">Who is calling me?</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QSB</div><div style="font-size: 13px; color: #33414F;">Your signal is fading.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QSL</div><div style="font-size: 13px; color: #33414F;">Received and confirmed. Also a contact card.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QSO</div><div style="font-size: 13px; color: #33414F;">A contact. A conversation.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QSY</div><div style="font-size: 13px; color: #33414F;">Change to another frequency.</div></div>
+          <div style="display: grid; grid-template-columns: 46px 1fr; column-gap: 8px; align-items: center; min-height: 28px; padding: 3px 12px; box-sizing: border-box; border-top: 1px solid #DCE3EA; background: #F1F5F8;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 14px; color: #0B7A7C;">QTH</div><div style="font-size: 13px; color: #33414F;">My location. Where I am.</div></div>
+        </div>
+
+        <!-- PHONETIC ALPHABET -->
+        <div style="background: #FFFFFF; border: 1px solid #C4CED8; border-radius: 10px; overflow: hidden;">
+          <div style="height: 32px; display: flex; align-items: center; padding: 0 12px; background: #0E1B2A; color: #FFFFFF; font-weight: 700; font-size: 12px; letter-spacing: 0.1em;">PHONETIC ALPHABET</div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 10px; padding: 8px 12px 10px 12px;">
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">A</span><span style="font-size: 13px; color: #33414F;">Alfa</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">N</span><span style="font-size: 13px; color: #33414F;">November</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">B</span><span style="font-size: 13px; color: #33414F;">Bravo</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">O</span><span style="font-size: 13px; color: #33414F;">Oscar</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">C</span><span style="font-size: 13px; color: #33414F;">Charlie</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">P</span><span style="font-size: 13px; color: #33414F;">Papa</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">D</span><span style="font-size: 13px; color: #33414F;">Delta</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">Q</span><span style="font-size: 13px; color: #33414F;">Quebec</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">E</span><span style="font-size: 13px; color: #33414F;">Echo</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">R</span><span style="font-size: 13px; color: #33414F;">Romeo</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">F</span><span style="font-size: 13px; color: #33414F;">Foxtrot</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">S</span><span style="font-size: 13px; color: #33414F;">Sierra</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">G</span><span style="font-size: 13px; color: #33414F;">Golf</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">T</span><span style="font-size: 13px; color: #33414F;">Tango</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">H</span><span style="font-size: 13px; color: #33414F;">Hotel</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">U</span><span style="font-size: 13px; color: #33414F;">Uniform</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">I</span><span style="font-size: 13px; color: #33414F;">India</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">V</span><span style="font-size: 13px; color: #33414F;">Victor</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">J</span><span style="font-size: 13px; color: #33414F;">Juliett</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">W</span><span style="font-size: 13px; color: #33414F;">Whiskey</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">K</span><span style="font-size: 13px; color: #33414F;">Kilo</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">X</span><span style="font-size: 13px; color: #33414F;">X-ray</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">L</span><span style="font-size: 13px; color: #33414F;">Lima</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">Y</span><span style="font-size: 13px; color: #33414F;">Yankee</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">M</span><span style="font-size: 13px; color: #33414F;">Mike</span></div>
+            <div style="display: flex; align-items: baseline; gap: 6px;"><span style="font-family: 'Big Shoulders Display','Arial Narrow','Roboto Condensed',sans-serif-condensed,sans-serif; font-weight: 800; font-size: 20px; color: #0B7A7C; width: 18px;">Z</span><span style="font-size: 13px; color: #33414F;">Zulu</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAMPLE CONTACT -->
+    <div style="background: #0E1B2A; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; color: #F4F7FA;">
+      <div style="font-weight: 700; font-size: 12px; letter-spacing: 0.1em; color: #FF8A52;">A FIRST CONTACT, LINE BY LINE</div>
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 6px 16px; align-items: baseline;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12.5px; color: #FFFFFF;">CQ CQ CQ DE [YOUR CALL] [YOUR CALL] K</div><div style="font-size: 12.5px; color: #C9D6E2;">Calling anyone, this is me. Over.</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12.5px; color: #FFFFFF;">[THEIR CALL] DE [YOUR CALL] GM UR RST 59 QTH [TOWN] HW? KN</div><div style="font-size: 12.5px; color: #C9D6E2;">Answering. Good morning, you are 59, I am in [town]. How copy?</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12.5px; color: #FFFFFF;">[YOUR CALL] DE [THEIR CALL] R TNX UR RST 59 73 AR</div><div style="font-size: 12.5px; color: #C9D6E2;">Received, thanks, you are 59 too. Best wishes, end of message.</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12.5px; color: #FFFFFF;">[THEIR CALL] DE [YOUR CALL] 73 SK</div><div style="font-size: 12.5px; color: #C9D6E2;">Best wishes. End of contact.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div></section>
+</main>
+<script>
+(function(){
+  function fit(){
+    document.querySelectorAll('.sheet').forEach(function(s){
+      var k=Math.min(1,s.clientWidth/794), p=s.querySelector('.paper');
+      p.style.transform='scale('+k+')'; s.style.height=(1123*k)+'px';
+    });
+  }
+  addEventListener('resize',fit); addEventListener('load',fit); fit();
+})();
+</script>
+</body>
+</html>

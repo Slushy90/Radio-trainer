@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Radio Trainer</title>
+<meta name="description" content="Morse code practice and UK amateur radio exam practice, offline.">
+<meta name="theme-color" content="#0f1216">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Radio Trainer">
+<style>
+:root{
+  --bg:#f3f1ea; --card:#ffffff; --line:#d8d3c5; --fg:#1d2227; --muted:#5f666d;
+  --cw:#b9780f; --cw-soft:#f6ead0; --ex:#0d6e7a; --ex-soft:#dcefef; --cs:#b3361a; --cs-soft:#f8e1d9;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1216; --card:#171b20; --line:#2c333b; --fg:#eef0ef; --muted:#93a0aa;
+  --cw:#f4c23d; --cw-soft:#2c2412; --ex:#3fb3c0; --ex-soft:#12292d; --cs:#ff8a52; --cs-soft:#2e1a12; color-scheme:dark}}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:820px;margin:0 auto;padding-block:32px 40px;display:flex;flex-direction:column;gap:22px}
+.eyebrow{font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{margin:6px 0 0;font-size:clamp(30px,8vw,40px);line-height:1.05;letter-spacing:-.01em}
+.sub{margin:6px 0 0;color:var(--muted)}
+.cards{display:grid;gap:14px}
+@media(min-width:560px){.cards{grid-template-columns:1fr 1fr}}
+@media(min-width:800px){.cards{grid-template-columns:repeat(3,1fr)}}
+a.card{display:flex;flex-direction:column;gap:10px;padding:20px;border-radius:14px;background:var(--card);
+  border:1px solid var(--line);color:inherit;text-decoration:none;min-height:180px;transition:border-color .15s,transform .1s}
+a.card:hover{transform:translateY(-1px)}
+a.card:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+a.card.cw:hover{border-color:var(--cw)} a.card.ex:hover{border-color:var(--ex)} a.card.cs:hover{border-color:var(--cs)}
+.badge{align-self:flex-start;font:700 13px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;padding:7px 10px;border-radius:999px}
+.cw .badge{background:var(--cw-soft);color:var(--cw)} .ex .badge{background:var(--ex-soft);color:var(--ex)} .cs .badge{background:var(--cs-soft);color:var(--cs)}
+.card h2{margin:0;font-size:22px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.go{margin-top:auto;font-weight:600}
+.cw .go{color:var(--cw)} .ex .go{color:var(--ex)} .cs .go{color:var(--cs)}
+.morse{font:700 15px/1 ui-monospace,Menlo,monospace;letter-spacing:.25em}
+footer{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow">Foundation licence study kit</div>
+    <h1>Radio Trainer</h1>
+    <p class="sub">Practise Morse and the exam, with your cheat sheet to hand, online or off.</p>
+  </header>
+  <div class="cards">
+    <a class="card cw" href="cw.html">
+      <span class="badge"><span class="morse">&#8226;&#8211;&#8226;</span></span>
+      <h2>CW Trainer</h2>
+      <p>Code table, live stream, Koch lessons, matching game and a sentence-to-Morse generator.</p>
+      <span class="go">Open &#8250;</span>
+    </a>
+    <a class="card ex" href="exam.html">
+      <span class="badge">EXAM</span>
+      <h2>Exam Trainer</h2>
+      <p>Foundation and Intermediate mock papers, random mocks, topic practice and the reference data.</p>
+      <span class="go">Open &#8250;</span>
+    </a>
+    <a class="card cs" href="cheatsheet.html">
+      <span class="badge">A4</span>
+      <h2>Cheat Sheet</h2>
+      <p>Bands, frequencies and sidebands, Q-codes, ham lingo, the phonetic alphabet and a first contact.</p>
+      <span class="go">Open &#8250;</span>
+    </a>
+  </div>
+  <footer>Progress and settings are saved on this device. Works offline after the first visit.</footer>
+</main>
+<script>
+if ('serviceWorker' in navigator) window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+</script>
+</body>
+</html>

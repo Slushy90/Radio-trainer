@@ -1,0 +1,1055 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>CW Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout concept: an instrument panel — a pill tab strip up top switching between
+     five full-height views (Settings / CW table / Start stream / Koch trainer / Game),
+     each built from the same dark panel-and-readout language. */
+  :root{
+    --bg:#0f1216; --panel:#171b20; --panel-2:#1f242b; --panel-3:#262c34; --line:#2c333b;
+    --fg:#eef0ef; --muted:#8b949e; --muted-2:#5b636d;
+    --accent:#f4c23d; --accent-ink:#241a04; --accent-dim:#5c4a16;
+    --good:#4fd17a; --good-ink:#062310; --bad:#ef6a63; --bad-ink:#2a0a08;
+    --font-display:'Rajdhani',system-ui,-apple-system,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+    color-scheme:dark;
+  }
+  @media (prefers-color-scheme:light){
+    :root:not([data-theme="light"]){
+      --bg:#f4f2ea; --panel:#ffffff; --panel-2:#efece2; --panel-3:#e6e2d4; --line:#d7d2c2;
+      --fg:#1d2227; --muted:#656c73; --muted-2:#8c9298;
+      --accent:#b9780f; --accent-ink:#fff8ea; --accent-dim:#ecd49a;
+      --good:#1f8c4c; --good-ink:#eafbf0; --bad:#c6372c; --bad-ink:#fdeceb;
+      color-scheme:light;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f2ea; --panel:#ffffff; --panel-2:#efece2; --panel-3:#e6e2d4; --line:#d7d2c2;
+    --fg:#1d2227; --muted:#656c73; --muted-2:#8c9298;
+    --accent:#b9780f; --accent-ink:#fff8ea; --accent-dim:#ecd49a;
+    --good:#1f8c4c; --good-ink:#eafbf0; --bad:#c6372c; --bad-ink:#fdeceb;
+    color-scheme:light;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--fg); font-family:var(--font-display);
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+  }
+  .app{ max-width:760px; margin:0 auto; padding-block:16px 44px; display:flex; flex-direction:column; gap:16px; }
+
+  /* Tab strip */
+  .tabs{
+    display:flex; gap:8px; overflow-x:auto; padding:6px; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; -ms-overflow-style:none; scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tab{
+    flex:0 0 auto; font-family:var(--font-display); font-weight:700; font-size:14px; letter-spacing:.03em;
+    padding:10px 16px; border-radius:10px; border:1px solid transparent; background:var(--panel-2);
+    color:var(--muted); cursor:pointer; white-space:nowrap;
+  }
+  .tab.gear{ font-size:17px; padding:10px 13px; }
+  .tab[aria-selected="true"]{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .tab.running[aria-selected="true"]{ background:var(--good); color:var(--good-ink); border-color:var(--good); }
+  .tab:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .view{ display:flex; flex-direction:column; gap:16px; }
+  .view[hidden]{ display:none; }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .panel h2{ margin:0; font-size:19px; font-weight:700; letter-spacing:.01em; }
+  .panel .sub{ margin:0; color:var(--muted); font-size:13.5px; }
+  .eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+
+  .info-card{ background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:16px; }
+
+  /* Live readout shared by Start + Koch */
+  .live-stage{
+    display:flex; align-items:center; justify-content:center; gap:clamp(14px,5vw,30px);
+    min-height:140px; background:var(--panel-2); border:1px solid var(--line); border-radius:12px;
+    padding:20px 10px;
+  }
+  .live-slot{ display:flex; flex-direction:column; align-items:center; gap:8px; min-width:52px; }
+  .live-slot .ltr{ font-family:var(--font-mono); font-weight:700; font-size:clamp(26px,9vw,42px); color:var(--muted-2); text-shadow:none; transition:color .15s ease, text-shadow .15s ease; }
+  .live-slot.current .ltr{ color:var(--accent); text-shadow:0 0 16px color-mix(in srgb, var(--accent) 65%, transparent); }
+  .live-slot .pat{ font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; color:var(--muted-2); min-height:1.2em; }
+  .live-slot.current .pat{ color:var(--accent); }
+  .status-line{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; color:var(--muted);
+    display:flex; flex-wrap:wrap; gap:4px 10px; justify-content:center; text-align:center;
+  }
+  .status-line strong{ color:var(--fg); }
+
+  .btn-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  button{ font-family:var(--font-display); cursor:pointer; }
+  .btn{
+    flex:1; min-width:100px; border:1px solid var(--line); background:var(--panel-3); color:var(--fg);
+    border-radius:9px; padding:13px 16px; font-size:15px; font-weight:700; letter-spacing:.03em;
+    transition:border-color .12s ease, filter .12s ease;
+  }
+  .btn:hover{ border-color:color-mix(in srgb, var(--accent) 45%, var(--line)); }
+  .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .btn:disabled{ opacity:.4; cursor:default; }
+  .btn-accent{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .btn-accent:hover{ filter:brightness(1.05); }
+  .btn-stop{ background:var(--good); color:var(--good-ink); border-color:var(--good); }
+  .btn-end{ background:color-mix(in srgb, var(--bad) 20%, var(--panel-3)); color:var(--bad); border-color:color-mix(in srgb, var(--bad) 45%, var(--line)); }
+
+  /* Reference grid (CW tab) */
+  .ref-section + .ref-section{ margin-top:4px; }
+  .ref-section h3{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 10px;
+  }
+  .ref-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(78px,1fr)); gap:8px; }
+  .ref-tile{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:10px 6px;
+    display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center;
+    color:var(--fg); cursor:pointer; transition:border-color .12s ease, transform .08s ease;
+  }
+  .ref-tile:hover{ border-color:color-mix(in srgb, var(--accent) 45%, var(--line)); transform:translateY(-1px); }
+  .ref-tile:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .ref-tile .tok{ font-family:var(--font-mono); font-weight:700; font-size:15px; }
+  .ref-tile .pat{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; color:var(--accent); }
+  .ref-tile .lbl{ font-size:10.5px; color:var(--muted); line-height:1.2; }
+
+  /* Settings */
+  .toggle-list{ display:flex; flex-direction:column; }
+  .toggle-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:13px 0; border-bottom:1px solid var(--line);
+  }
+  .toggle-row:last-child{ border-bottom:none; }
+  .toggle-row .txt{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .toggle-row .txt .t{ font-weight:600; font-size:14.5px; letter-spacing:.02em; }
+  .toggle-row .txt .d{ font-size:12px; color:var(--muted); }
+  .switch{ position:relative; display:inline-block; width:46px; height:27px; flex:0 0 auto; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch .track{
+    position:absolute; inset:0; background:var(--panel-3); border:1px solid var(--line);
+    border-radius:999px; transition:background .15s ease;
+  }
+  .switch .track::before{
+    content:''; position:absolute; width:19px; height:19px; left:3px; top:3px; border-radius:50%;
+    background:var(--muted); transition:transform .15s ease, background .15s ease;
+  }
+  .switch input:checked + .track{ background:color-mix(in srgb, var(--good) 35%, var(--panel-3)); border-color:var(--good); }
+  .switch input:checked + .track::before{ transform:translateX(19px); background:var(--good); }
+  .switch input:focus-visible + .track{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  .field{ display:flex; flex-direction:column; gap:7px; }
+  .field .lbl-row{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .field .lbl-row .t{ font-weight:600; font-size:14.5px; letter-spacing:.02em; }
+  .field .lbl-row .v{ font-family:var(--font-mono); font-size:13px; background:var(--panel-3); border:1px solid var(--line); border-radius:7px; padding:3px 9px; }
+  .field .d{ font-size:12px; color:var(--muted); margin-top:-3px; }
+  input[type="range"]{
+    -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; background:var(--line); outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%;
+    background:var(--accent); border:2px solid var(--panel); box-shadow:0 0 0 1px var(--line); cursor:pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:18px; height:18px; border-radius:50%; background:var(--accent); border:2px solid var(--panel);
+    box-shadow:0 0 0 1px var(--line); cursor:pointer;
+  }
+
+  .upload-box{ display:flex; flex-direction:column; gap:10px; }
+  .upload-box textarea{
+    width:100%; min-height:72px; background:var(--panel-3); border:1px solid var(--line); color:var(--fg);
+    border-radius:8px; padding:10px 12px; font-family:var(--font-display); font-size:13.5px; resize:vertical;
+  }
+  .upload-box textarea::placeholder{ color:var(--muted-2); }
+  .file-btn{ position:relative; overflow:hidden; }
+  .file-btn input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+
+  /* Koch level grid */
+  .level-grid{ display:grid; grid-template-columns:repeat(8,1fr); gap:6px; }
+  .level-tile{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:7px; padding:8px 2px;
+    text-align:center; font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--muted-2);
+  }
+  .level-tile.unlocked{ color:var(--fg); }
+  .level-tile.current{ color:var(--accent); border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset; }
+
+  /* Game */
+  .mode-row{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .mode-btn{
+    border:1px solid var(--line); background:var(--panel-2); color:var(--fg); border-radius:9px;
+    padding:13px; font-size:14px; font-weight:700; letter-spacing:.02em;
+  }
+  .mode-btn[aria-pressed="true"]{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(76px,1fr)); gap:8px; }
+  .card{
+    aspect-ratio:3/4; border-radius:9px; border:1px solid var(--line); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;
+    background:var(--panel-2); transition:border-color .12s ease, background .15s ease;
+  }
+  .card .back{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:
+      repeating-linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent) 0 2px, transparent 2px 10px),
+      var(--panel-3);
+  }
+  .card .back::after{ content:'•–'; font-family:var(--font-mono); color:var(--muted-2); font-size:13px; letter-spacing:.2em; }
+  .card .front{
+    position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    background:var(--panel-2);
+  }
+  .card .front .tok{ font-family:var(--font-mono); font-weight:700; font-size:14px; }
+  .card .front .pat{ font-family:var(--font-mono); font-size:9.5px; color:var(--accent); letter-spacing:.06em; }
+  .card.flipped .back{ display:none; } .card.flipped .front{ display:flex; }
+  .card.solved{ border-color:var(--good); }
+  .card.solved .front{ background:color-mix(in srgb, var(--good) 16%, var(--panel-2)); }
+  .card.wrong .front{ background:color-mix(in srgb, var(--bad) 18%, var(--panel-2)); }
+  .score-row{ display:flex; gap:20px; }
+  .score{ display:flex; flex-direction:column; gap:2px; }
+  .score .num{ font-family:var(--font-mono); font-weight:700; font-size:20px; font-variant-numeric:tabular-nums; }
+  .score .lbl{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .score.good .num{ color:var(--good); }
+  .score.bad .num{ color:var(--bad); }
+
+  /* Generator */
+  .gen-display{ display:flex; flex-wrap:wrap; gap:18px 10px; min-height:60px; }
+  .gen-word{ display:flex; gap:6px; }
+  .gen-letter{ display:flex; flex-direction:column; align-items:center; gap:4px; min-width:18px; }
+  .gen-letter .ltr{ font-family:var(--font-mono); font-weight:700; font-size:20px; color:var(--muted-2); transition:color .12s ease, text-shadow .12s ease; }
+  .gen-letter .pat{ font-family:var(--font-mono); font-size:10px; color:var(--muted-2); letter-spacing:.08em; min-height:1.2em; }
+  .gen-letter.played .ltr{ color:var(--fg); }
+  .gen-letter.played .pat{ color:var(--muted); }
+  .gen-letter.current .ltr{ color:var(--accent); text-shadow:0 0 12px color-mix(in srgb, var(--accent) 60%, transparent); }
+  .gen-letter.current .pat{ color:var(--accent); }
+  #genInput{
+    width:100%; min-height:70px; background:var(--panel-2); border:1px solid var(--line); color:var(--fg);
+    border-radius:8px; padding:12px 14px; font-family:var(--font-display); font-size:15px; resize:vertical;
+  }
+  #genInput::placeholder{ color:var(--muted-2); }
+
+  footer{ color:var(--muted-2); font-size:11.5px; line-height:1.6; }
+
+  @media (max-width:420px){
+    .level-grid{ grid-template-columns:repeat(5,1fr); }
+  }
+</style>
+
+<div class="app">
+  <nav class="tabs" role="tablist" aria-label="Trainer sections">
+    <button class="tab gear" id="tabBtn-settings" role="tab" aria-selected="false" data-view="settings" title="Settings">⚙</button>
+    <button class="tab" id="tabBtn-cw" role="tab" aria-selected="false" data-view="cw">CW</button>
+    <button class="tab" id="tabBtn-start" role="tab" aria-selected="false" data-view="start">START</button>
+    <button class="tab" id="tabBtn-koch" role="tab" aria-selected="false" data-view="koch">KOCH</button>
+    <button class="tab" id="tabBtn-game" role="tab" aria-selected="false" data-view="game">GAME</button>
+    <button class="tab" id="tabBtn-gen" role="tab" aria-selected="false" data-view="gen">GENERATOR</button>
+  </nav>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-settings" hidden>
+    <div class="panel">
+      <div class="eyebrow">Content</div>
+      <div class="toggle-list" id="categoryToggles"></div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Sending</div>
+      <div class="toggle-list">
+        <div class="toggle-row">
+          <div class="txt"><span class="t">Real CW</span><span class="d">More realistic dot/dash timing</span></div>
+          <label class="switch"><input type="checkbox" id="toggleRealCW"><span class="track"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="txt"><span class="t">Show Morse code</span><span class="d">Show the dot/dash pattern under characters</span></div>
+          <label class="switch"><input type="checkbox" id="toggleShowMorse"><span class="track"></span></label>
+        </div>
+      </div>
+      <div class="field">
+        <div class="lbl-row"><span class="t">WPM</span><span class="v" id="wpmVal">19 WPM</span></div>
+        <input type="range" id="wpmRange" min="5" max="35" step="1" value="19">
+      </div>
+      <div class="field">
+        <div class="lbl-row"><span class="t">Farnsworth</span><span class="v" id="fwVal">19 WPM</span></div>
+        <input type="range" id="fwRange" min="5" max="40" step="1" value="19">
+        <span class="d">Character speed — faster characters with slower spacing</span>
+      </div>
+      <div class="field">
+        <div class="lbl-row"><span class="t">Volume</span><span class="v" id="volVal">0.35</span></div>
+        <input type="range" id="volRange" min="0" max="1" step="0.05" value="0.35">
+      </div>
+      <div class="field">
+        <div class="lbl-row"><span class="t">Sidetone pitch</span><span class="v" id="toneVal">700 Hz</span></div>
+        <input type="range" id="toneRange" min="400" max="1000" step="10" value="700">
+      </div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">Custom text</div>
+      <div class="toggle-row" style="padding-top:0">
+        <div class="txt"><span class="t">Use uploaded text</span><span class="d">Drives the Start stream instead of the categories above</span></div>
+        <label class="switch"><input type="checkbox" id="toggleCustom"><span class="track"></span></label>
+      </div>
+      <div class="upload-box">
+        <button class="btn file-btn" type="button">Upload .txt
+          <input type="file" id="fileInput" accept=".txt,text/plain">
+        </button>
+        <textarea id="customPreview" readonly placeholder="Uploaded text appears here, in uppercase"></textarea>
+        <span class="d" id="customStatus">No file loaded</span>
+      </div>
+    </div>
+    <footer>Live microphone dictation isn't available in this build — a future update can add it. Settings and progress are saved on this device.</footer>
+  </section>
+
+  <!-- CW reference -->
+  <section class="view" id="view-cw" hidden>
+    <div class="panel">
+      <h2>Code table</h2>
+      <p class="sub">Tap any tile to hear it.</p>
+    </div>
+    <div class="panel" id="refPanel"></div>
+  </section>
+
+  <!-- START stream -->
+  <section class="view" id="view-start" hidden>
+    <div class="panel">
+      <div class="live-stage" id="startStage"></div>
+      <div class="status-line" id="startStatus">Stopped</div>
+      <div class="btn-row">
+        <button class="btn btn-accent" id="startToggleBtn" type="button">START</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- KOCH -->
+  <section class="view" id="view-koch" hidden>
+    <div class="panel" id="kochConfigPanel">
+      <div class="info-card">
+        <h2>Learn the Koch system</h2>
+        <p class="sub" id="kochInfoLine">25 groups · 5 characters · 2 pauses · level 1–40</p>
+      </div>
+      <div class="field">
+        <div class="lbl-row"><span class="t">Level</span><span class="v" id="kochLevelVal">1/40</span></div>
+        <input type="range" id="kochLevelRange" min="1" max="40" step="1" value="1">
+      </div>
+      <div class="level-grid" id="kochGrid"></div>
+    </div>
+    <div class="panel" id="kochLivePanel" hidden>
+      <div class="live-stage" id="kochStage"></div>
+      <div class="status-line" id="kochStatus">—</div>
+    </div>
+    <div class="panel">
+      <div class="btn-row">
+        <button class="btn btn-accent" id="kochStartBtn" type="button">Start</button>
+        <button class="btn" id="kochPauseBtn" type="button" disabled>Pause</button>
+        <button class="btn btn-end" id="kochEndBtn" type="button" disabled>End</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENERATOR -->
+  <section class="view" id="view-gen" hidden>
+    <div class="panel">
+      <h2>Morse generator</h2>
+      <p class="sub">Type a sentence and play it — each letter lights up with its pattern as it sounds.</p>
+      <textarea id="genInput" rows="3" placeholder="Type a sentence…"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-accent" id="genPlayBtn" type="button">Play</button>
+        <button class="btn" id="genClearBtn" type="button">Clear</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="gen-display" id="genDisplay"></div>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section class="view" id="view-game" hidden>
+    <div class="panel">
+      <h2>CW game</h2>
+      <p class="sub">Listen · flip cards · answer correctly</p>
+      <div class="mode-row" id="gameModeRow"></div>
+    </div>
+    <div class="panel">
+      <div class="card-grid" id="gameGrid"></div>
+      <div class="score-row">
+        <div class="score good"><div class="num" id="scoreCorrect">0</div><div class="lbl">Correct</div></div>
+        <div class="score bad"><div class="num" id="scoreError">0</div><div class="lbl">Errors</div></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-accent" id="gameDealBtn" type="button">Deal</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------- Data ----------------
+  var MORSE = {
+    A:'.-', B:'-...', C:'-.-.', D:'-..', E:'.', F:'..-.', G:'--.', H:'....',
+    I:'..', J:'.---', K:'-.-', L:'.-..', M:'--', N:'-.', O:'---', P:'.--.',
+    Q:'--.-', R:'.-.', S:'...', T:'-', U:'..-', V:'...-', W:'.--', X:'-..-',
+    Y:'-.--', Z:'--..',
+    '0':'-----','1':'.----','2':'..---','3':'...--','4':'....-',
+    '5':'.....','6':'-....','7':'--...','8':'---..','9':'----.',
+    '.':'.-.-.-', ',':'--..--', ':':'---...', '?':'..--..', "'":".----.",
+    '-':'-....-', '/':'-..-.', '(':'-.--.', ')':'-.--.-', '"':'.-..-.',
+    '=':'-...-', '+':'.-.-.', '@':'.--.-.', '!':'-.-.--', ';':'-.-.-.', '&':'.-...'
+  };
+  var SYMBOL_LABELS = {
+    '.':'Period', ',':'Comma', ':':'Colon', '?':'Question mark', "'":'Apostrophe',
+    '-':'Hyphen', '/':'Slash', '(':'Open parenthesis', ')':'Close parenthesis', '"':'Quote',
+    '=':'Equals', '+':'Plus', '@':'At sign', '!':'Exclamation mark', ';':'Semicolon', '&':'Ampersand'
+  };
+  var PROSIGNS = {
+    AR:{ pattern:'.-.-.', label:'End of message' },
+    AS:{ pattern:'.-...', label:'Please wait' },
+    HH:{ pattern:'........', label:'Error' },
+    KN:{ pattern:'-.--.', label:'Named station only' },
+    SK:{ pattern:'...-.-', label:'End of contact' }
+  };
+  var ABBR = {
+    AGN:'Again', ANT:'Antenna', BK:'Break', CQ:'General call', DE:'From / this is', DX:'Long distance',
+    FER:'For', GA:'Good afternoon', GB:'Goodbye', GE:'Good evening', GL:'Good luck', GM:'Good morning',
+    GUD:'Good', HR:'Here', OM:'Fellow ham', OP:'Operator', PSE:'Please', RIG:'Station gear',
+    RPT:'Repeat', RST:'Signal report', RX:'Receiver', TX:'Transmitter', TNX:'Thanks', TU:'Thank you',
+    UR:"Your / you're", WX:'Weather', '73':'Best regards', '88':'Love and kisses'
+  };
+  var QCODES = {
+    QRL:'Frequency busy', QRM:'Interference', QRN:'Static', QRO:'Increase power', QRP:'Low power',
+    QRS:'Send slower', QRT:'Stop sending', QRX:'Stand by', QSB:'Fading signal', QSL:'Acknowledge',
+    QSO:'Radio contact', QSY:'Change frequency', QTH:'Location'
+  };
+  var WORDS = ['RADIO','SIGNAL','ANTENNA','STATION','POWER','OPERATOR','MORSE','PRACTICE','LISTEN','COPY',
+    'SEND','RECEIVE','WEATHER','MORNING','EVENING','THANKS','PLEASE','AGAIN','FRIEND','LICENSE',
+    'CONTEST','PORTABLE','BATTERY','GROUND','TUNER','DIPOLE','VERTICAL','METER','VOLT','WATT',
+    'SOLDER','CIRCUIT','STRONG','WEAK','CLEAR','STATIC','SUNSPOT','FILTER','SPEAKER','CONTACT',
+    'CALLSIGN','ANSWER','NUMBER','LETTER','GROUP','SPEED','TIMING','RHYTHM','PATTERN','KEYER'];
+
+  var KOCH_ORDER = ['K','M','R','S','U','A','P','T','L','O','W','I','.','N','J','E','F','0','Y','V',
+    'G','5','/','Q','9','Z','H','3','8','B','?','4','2','7','C','1','D','6','X','='];
+
+  var LETTERS = Object.keys(MORSE).filter(function(k){ return /^[A-Z]$/.test(k); });
+  var DIGITS = Object.keys(MORSE).filter(function(k){ return /^[0-9]$/.test(k); });
+  var SYMKEYS = Object.keys(SYMBOL_LABELS);
+
+  var POOLS = {
+    words: WORDS.map(function(w){ return { type:'word', value:w }; }),
+    letters: LETTERS.map(function(c){ return { type:'char', value:c }; }),
+    numbers: DIGITS.map(function(c){ return { type:'char', value:c }; }),
+    symbols: SYMKEYS.map(function(c){ return { type:'char', value:c }; }),
+    prosigns: Object.keys(PROSIGNS).map(function(k){ return { type:'prosign', value:k }; })
+      .concat(Object.keys(ABBR).map(function(k){ return { type:'char', value:k }; }))
+      .concat(Object.keys(QCODES).map(function(k){ return { type:'char', value:k }; }))
+      .concat([{ type:'char', value:'599' }])
+  };
+
+  // ---------------- Persistence ----------------
+  var STORE_KEY = 'cwtrainer-state-v1';
+  function loadState(){
+    var fallback = {
+      categories: { words:true, letters:true, numbers:false, symbols:false, prosigns:true },
+      realCW:false, showMorse:true, wpm:19, farnsworth:19, volume:0.35, tone:700,
+      useCustom:false, customText:'',
+      kochLevel:1
+    };
+    try{
+      var raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return fallback;
+      return Object.assign({}, fallback, JSON.parse(raw));
+    }catch(e){ return fallback; }
+  }
+  var state = loadState();
+  function saveState(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+  // ---------------- Timing engine ----------------
+  function computeTiming(charWpm, effWpm){
+    var wc = Math.max(charWpm, effWpm);
+    var we = Math.min(charWpm, effWpm) === effWpm ? effWpm : effWpm;
+    we = effWpm;
+    if (we > wc) we = wc;
+    var ditMs = 1200 / wc;
+    var charUnitsMs = 31 * ditMs;
+    var interCharMs, interWordMs;
+    if (we >= wc){
+      interCharMs = 3 * ditMs;
+      interWordMs = 7 * ditMs;
+    } else {
+      var totalMs = 60000 / we;
+      var spacingMs = Math.max(totalMs - charUnitsMs, 19 * ditMs);
+      var unitMs = spacingMs / 19;
+      interCharMs = 3 * unitMs;
+      interWordMs = 7 * unitMs;
+    }
+    return { ditMs:ditMs, dahMs:ditMs*3, elementGapMs:ditMs, interCharMs:interCharMs, interWordMs:interWordMs };
+  }
+  function jitter(ms, enabled){
+    if (!enabled) return ms;
+    return ms * (0.9 + Math.random() * 0.2);
+  }
+
+  // Pure timeline builder — testable without Web Audio.
+  function buildTimeline(tokens, timing, realCW){
+    var t = 0;
+    var items = [];
+    tokens.forEach(function(tok, ti){
+      var startTok = t;
+      if (tok.type === 'pause'){
+        t += timing.interWordMs * 4;
+      } else if (tok.type === 'prosign'){
+        var pat = PROSIGNS[tok.value].pattern;
+        for (var i=0;i<pat.length;i++){
+          var dur = jitter(pat[i]==='.' ? timing.ditMs : timing.dahMs, realCW);
+          items.push({ kind:'tone', start:t, dur:dur });
+          t += dur;
+          if (i < pat.length-1) t += jitter(timing.elementGapMs, realCW);
+        }
+      } else {
+        var letters = String(tok.value).split('');
+        letters.forEach(function(ch, li){
+          var p = MORSE[ch];
+          if (!p) return;
+          var letterStart = t;
+          for (var i=0;i<p.length;i++){
+            var dur = jitter(p[i]==='.' ? timing.ditMs : timing.dahMs, realCW);
+            items.push({ kind:'tone', start:t, dur:dur });
+            t += dur;
+            if (i < p.length-1) t += jitter(timing.elementGapMs, realCW);
+          }
+          items.push({ kind:'letterMark', tokenIndex:ti, letterIndex:li, char:ch, start:letterStart, end:t });
+          if (li < letters.length-1) t += jitter(timing.interCharMs, realCW);
+        });
+      }
+      items.push({ kind:'tokenEnd', token:tok.value, type:tok.type, start:startTok, end:t });
+      if (ti < tokens.length-1) t += jitter(timing.interWordMs, realCW);
+    });
+    return { items:items, totalMs:t };
+  }
+
+  var audioCtx = null;
+  function ensureAudio(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playTimeline(ctx, timeline, toneHz, startAt, volume){
+    var gain = ctx.createGain(); gain.gain.value = 0; gain.connect(ctx.destination);
+    var osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = toneHz; osc.connect(gain);
+    osc.start(startAt);
+    timeline.items.forEach(function(it){
+      if (it.kind !== 'tone') return;
+      var s = startAt + it.start/1000, dur = it.dur/1000;
+      var ramp = Math.min(0.004, dur/4);
+      gain.gain.setValueAtTime(0, s);
+      gain.gain.linearRampToValueAtTime(volume, s + ramp);
+      gain.gain.setValueAtTime(volume, s + dur - ramp);
+      gain.gain.linearRampToValueAtTime(0, s + dur);
+    });
+    osc.stop(startAt + timeline.totalMs/1000 + 0.05);
+    return osc;
+  }
+
+  function runSession(tokens, callbacks){
+    var ctx = ensureAudio();
+    var timing = computeTiming(state.farnsworth, state.wpm);
+    var timeline = buildTimeline(tokens, timing, state.realCW);
+    var startAt = ctx.currentTime + 0.12;
+    playTimeline(ctx, timeline, state.tone, startAt, state.volume);
+    var marks = timeline.items.filter(function(it){ return it.kind === 'tokenEnd' || it.kind === 'letterMark'; });
+    var idx = 0, rafId = null, stopped = false;
+    function tick(){
+      if (stopped) return;
+      var elapsed = (ctx.currentTime - startAt) * 1000;
+      while (idx < marks.length && elapsed >= marks[idx].start){
+        var m = marks[idx];
+        if (m.kind === 'tokenEnd' && callbacks.onTokenStart) callbacks.onTokenStart(m, idx);
+        if (m.kind === 'letterMark' && callbacks.onLetterStart) callbacks.onLetterStart(m);
+        idx++;
+      }
+      if (elapsed >= timeline.totalMs){ callbacks.onComplete(); return; }
+      rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
+    return {
+      stop: function(){ stopped = true; if (rafId) cancelAnimationFrame(rafId); },
+      suspend: function(){ ctx.suspend(); },
+      resume: function(){ ctx.resume(); }
+    };
+  }
+
+  function playSingleToken(tok){
+    runSession([tok], { onTokenStart:function(){}, onComplete:function(){} });
+  }
+
+  // ---------------- Pools ----------------
+  function activePool(){
+    if (state.useCustom && state.customText){
+      var words = state.customText.toUpperCase().split(/\s+/).map(function(w){
+        return w.split('').filter(function(ch){ return MORSE[ch]; }).join('');
+      }).filter(function(w){ return w.length > 0; });
+      if (words.length) return words.map(function(w){ return { type:'char', value:w }; });
+    }
+    var pool = [];
+    Object.keys(state.categories).forEach(function(cat){
+      if (state.categories[cat]) pool = pool.concat(POOLS[cat]);
+    });
+    if (!pool.length) pool = POOLS.letters;
+    return pool;
+  }
+  function randomToken(pool){ return pool[Math.floor(Math.random()*pool.length)]; }
+
+  function patternFor(tok){
+    if (tok.type === 'prosign') return PROSIGNS[tok.value].pattern;
+    return String(tok.value).split('').map(function(ch){ return MORSE[ch] || ''; }).join(' ');
+  }
+  function dotDash(p){ return p.replace(/\./g,'•').replace(/-/g,'–'); }
+
+  // ---------------- Tabs ----------------
+  var views = ['settings','cw','start','koch','game','gen'];
+  var activeView = 'cw';
+  function switchView(name){
+    if (name === 'start' && activeView === 'start' ) { /* allow re-select */ }
+    if (activeView === 'start' && name !== 'start' && startSession) stopStart();
+    if (activeView === 'koch' && name !== 'koch' && kochSession) endKoch();
+    if (activeView === 'gen' && name !== 'gen' && typeof stopGen === 'function') stopGen();
+    activeView = name;
+    views.forEach(function(v){
+      document.getElementById('view-' + v).hidden = (v !== name);
+      var btn = document.getElementById('tabBtn-' + v);
+      btn.setAttribute('aria-selected', v === name ? 'true' : 'false');
+    });
+  }
+  views.forEach(function(v){
+    document.getElementById('tabBtn-' + v).addEventListener('click', function(){ switchView(v); });
+  });
+
+  // ---------------- Settings view ----------------
+  var CAT_META = {
+    words:{ t:'Words', d:'Common practice words' },
+    letters:{ t:'Letters', d:'A–Z' },
+    numbers:{ t:'Numbers', d:'0–9' },
+    symbols:{ t:'Symbols', d:'Punctuation characters' },
+    prosigns:{ t:'Prosigns', d:'Procedure signs, abbreviations, Q-codes' }
+  };
+  var categoryToggles = document.getElementById('categoryToggles');
+  categoryToggles.innerHTML = Object.keys(CAT_META).map(function(cat){
+    return '<div class="toggle-row"><div class="txt"><span class="t">' + CAT_META[cat].t +
+      '</span><span class="d">' + CAT_META[cat].d + '</span></div>' +
+      '<label class="switch"><input type="checkbox" data-cat="' + cat + '"><span class="track"></span></label></div>';
+  }).join('');
+  categoryToggles.querySelectorAll('input[data-cat]').forEach(function(inp){
+    inp.checked = !!state.categories[inp.dataset.cat];
+    inp.addEventListener('change', function(){
+      state.categories[inp.dataset.cat] = inp.checked; saveState();
+    });
+  });
+
+  var elRealCW = document.getElementById('toggleRealCW');
+  var elShowMorse = document.getElementById('toggleShowMorse');
+  elRealCW.checked = state.realCW;
+  elShowMorse.checked = state.showMorse;
+  elRealCW.addEventListener('change', function(){ state.realCW = elRealCW.checked; saveState(); });
+  elShowMorse.addEventListener('change', function(){ state.showMorse = elShowMorse.checked; saveState(); renderRef(); });
+
+  var wpmRange = document.getElementById('wpmRange'), wpmVal = document.getElementById('wpmVal');
+  var fwRange = document.getElementById('fwRange'), fwVal = document.getElementById('fwVal');
+  var volRange = document.getElementById('volRange'), volVal = document.getElementById('volVal');
+  var toneRange = document.getElementById('toneRange'), toneVal = document.getElementById('toneVal');
+  function renderSpeedFields(){
+    wpmRange.value = state.wpm; wpmVal.textContent = state.wpm + ' WPM';
+    fwRange.value = state.farnsworth; fwVal.textContent = state.farnsworth + ' WPM';
+    volRange.value = state.volume; volVal.textContent = state.volume.toFixed(2);
+    toneRange.value = state.tone; toneVal.textContent = state.tone + ' Hz';
+  }
+  wpmRange.addEventListener('input', function(){ state.wpm = parseInt(wpmRange.value,10); if(state.farnsworth<state.wpm) state.farnsworth=state.wpm; renderSpeedFields(); saveState(); });
+  fwRange.addEventListener('input', function(){ state.farnsworth = parseInt(fwRange.value,10); if(state.farnsworth<state.wpm) state.farnsworth=state.wpm; renderSpeedFields(); saveState(); });
+  volRange.addEventListener('input', function(){ state.volume = parseFloat(volRange.value); renderSpeedFields(); saveState(); });
+  toneRange.addEventListener('input', function(){ state.tone = parseInt(toneRange.value,10); renderSpeedFields(); saveState(); });
+  renderSpeedFields();
+
+  var toggleCustom = document.getElementById('toggleCustom');
+  var fileInput = document.getElementById('fileInput');
+  var customPreview = document.getElementById('customPreview');
+  var customStatus = document.getElementById('customStatus');
+  toggleCustom.checked = state.useCustom;
+  customPreview.value = state.customText || '';
+  customStatus.textContent = state.customText ? (state.customText.length + ' characters loaded') : 'No file loaded';
+  toggleCustom.addEventListener('change', function(){ state.useCustom = toggleCustom.checked; saveState(); });
+  fileInput.addEventListener('change', function(){
+    var f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var text = String(reader.result || '').toUpperCase();
+      state.customText = text;
+      state.useCustom = true;
+      toggleCustom.checked = true;
+      customPreview.value = text;
+      customStatus.textContent = f.name + ' · ' + text.length + ' characters loaded';
+      saveState();
+    };
+    reader.readAsText(f);
+  });
+
+  // ---------------- CW reference view ----------------
+  var refPanel = document.getElementById('refPanel');
+  function tileHtml(tok, labelMap){
+    var pattern = tok.type === 'prosign' ? PROSIGNS[tok.value].pattern : patternFor(tok).replace(/\s+/g,'');
+    var lbl = labelMap ? labelMap[tok.value] : '';
+    return '<button type="button" class="ref-tile" data-tok="' + tok.type + ':' + tok.value + '">' +
+      '<span class="tok">' + (tok.type === 'prosign' ? '<' + tok.value + '>' : tok.value) + '</span>' +
+      (state.showMorse ? '<span class="pat">' + dotDash(pattern) + '</span>' : '') +
+      (lbl ? '<span class="lbl">' + lbl + '</span>' : '') +
+      '</button>';
+  }
+  function renderRef(){
+    var html = '';
+    html += '<div class="ref-section"><h3>Letters</h3><div class="ref-grid">' +
+      LETTERS.map(function(c){ return tileHtml({type:'char',value:c}); }).join('') + '</div></div>';
+    html += '<div class="ref-section"><h3>Numbers</h3><div class="ref-grid">' +
+      DIGITS.map(function(c){ return tileHtml({type:'char',value:c}); }).join('') + '</div></div>';
+    html += '<div class="ref-section"><h3>Symbols</h3><div class="ref-grid">' +
+      SYMKEYS.map(function(c){ return tileHtml({type:'char',value:c}, SYMBOL_LABELS); }).join('') + '</div></div>';
+    html += '<div class="ref-section"><h3>Procedure signs</h3><div class="ref-grid">' +
+      Object.keys(PROSIGNS).map(function(k){ return tileHtml({type:'prosign',value:k}, Object.keys(PROSIGNS).reduce(function(a,kk){ a[kk]=PROSIGNS[kk].label; return a; },{})); }).join('') + '</div></div>';
+    html += '<div class="ref-section"><h3>Abbreviations</h3><div class="ref-grid">' +
+      Object.keys(ABBR).map(function(k){ return tileHtml({type:'char',value:k}, ABBR); }).join('') + '</div></div>';
+    html += '<div class="ref-section"><h3>Q-codes</h3><div class="ref-grid">' +
+      Object.keys(QCODES).map(function(k){ return tileHtml({type:'char',value:k}, QCODES); }).join('') + '</div></div>';
+    refPanel.innerHTML = html;
+  }
+  refPanel.addEventListener('click', function(e){
+    var btn = e.target.closest('.ref-tile');
+    if (!btn) return;
+    var parts = btn.dataset.tok.split(':');
+    playSingleToken({ type:parts[0], value:parts[1] });
+  });
+  renderRef();
+
+  // ---------------- START stream ----------------
+  var startStage = document.getElementById('startStage');
+  var startStatus = document.getElementById('startStatus');
+  var startToggleBtn = document.getElementById('startToggleBtn');
+  var startSession = null;
+  var startWindow = { prev:null, current:null, next:null };
+
+  function renderStartStage(){
+    function slot(tok, isCurrent){
+      if (!tok) return '<div class="live-slot"><span class="ltr">·</span></div>';
+      var pattern = tok.type === 'prosign' ? PROSIGNS[tok.value].pattern : patternFor(tok).replace(/\s+/g,' ');
+      var label = tok.type === 'prosign' ? '<' + tok.value + '>' : tok.value;
+      return '<div class="live-slot' + (isCurrent ? ' current' : '') + '"><span class="ltr">' + label + '</span>' +
+        (state.showMorse ? '<span class="pat">' + dotDash(pattern) + '</span>' : '') + '</div>';
+    }
+    startStage.innerHTML = slot(startWindow.prev,false) + slot(startWindow.current,true) + slot(startWindow.next,false);
+  }
+  renderStartStage();
+
+  function startNextToken(){
+    var pool = activePool();
+    startWindow.prev = startWindow.current;
+    startWindow.current = startWindow.next || randomToken(pool);
+    startWindow.next = randomToken(pool);
+    renderStartStage();
+    startSession = runSession([startWindow.current], {
+      onTokenStart:function(){},
+      onComplete:function(){ if (startToggleBtn.dataset.running === 'true') startNextToken(); }
+    });
+  }
+  function startStart(){
+    startToggleBtn.dataset.running = 'true';
+    startToggleBtn.textContent = 'STOP';
+    document.getElementById('tabBtn-start').classList.add('running');
+    startStatus.innerHTML = '<strong>Running</strong> · ' + state.wpm + ' WPM · Farnsworth ' + state.farnsworth + ' WPM · Display ' + (state.showMorse ? 'active' : 'hidden');
+    startWindow = { prev:null, current:null, next:null };
+    startNextToken();
+  }
+  function stopStart(){
+    startToggleBtn.dataset.running = 'false';
+    startToggleBtn.textContent = 'START';
+    document.getElementById('tabBtn-start').classList.remove('running');
+    startStatus.textContent = 'Stopped';
+    if (startSession) { startSession.stop(); startSession = null; }
+  }
+  startToggleBtn.dataset.running = 'false';
+  startToggleBtn.addEventListener('click', function(){
+    if (startToggleBtn.dataset.running === 'true') stopStart(); else startStart();
+  });
+
+  // ---------------- KOCH ----------------
+  var kochLevelRange = document.getElementById('kochLevelRange');
+  var kochLevelVal = document.getElementById('kochLevelVal');
+  var kochGrid = document.getElementById('kochGrid');
+  var kochConfigPanel = document.getElementById('kochConfigPanel');
+  var kochLivePanel = document.getElementById('kochLivePanel');
+  var kochStage = document.getElementById('kochStage');
+  var kochStatus = document.getElementById('kochStatus');
+  var kochStartBtn = document.getElementById('kochStartBtn');
+  var kochPauseBtn = document.getElementById('kochPauseBtn');
+  var kochEndBtn = document.getElementById('kochEndBtn');
+  var kochSession = null;
+  var kochWindow = { prev:null, current:null, next:null };
+  var kochPaused = false;
+
+  function renderKochGrid(){
+    kochLevelVal.textContent = state.kochLevel + '/40';
+    kochLevelRange.value = state.kochLevel;
+    kochGrid.innerHTML = KOCH_ORDER.map(function(c, i){
+      var unlocked = i < state.kochLevel;
+      var current = i === state.kochLevel - 1;
+      return '<div class="level-tile' + (unlocked?' unlocked':'') + (current?' current':'') + '">' + c + '</div>';
+    }).join('');
+  }
+  kochLevelRange.addEventListener('input', function(){
+    state.kochLevel = parseInt(kochLevelRange.value,10); saveState(); renderKochGrid();
+  });
+  renderKochGrid();
+
+  function kochPool(){
+    return KOCH_ORDER.slice(0, state.kochLevel).map(function(c){ return { type:'char', value:c }; });
+  }
+  function buildKochGroups(){
+    var pool = kochPool();
+    var groups = [];
+    for (var g = 0; g < 25; g++){
+      var val = '';
+      for (var i = 0; i < 5; i++) val += randomToken(pool).value;
+      groups.push({ type:'char', value:val });
+    }
+    var pauseSlots = [];
+    while (pauseSlots.length < 2){
+      var idx = 1 + Math.floor(Math.random() * (groups.length - 2));
+      if (pauseSlots.indexOf(idx) === -1) pauseSlots.push(idx);
+    }
+    pauseSlots.sort(function(a,b){ return a-b; }).forEach(function(idx, offset){
+      groups.splice(idx + offset, 0, { type:'pause', value:'···' });
+    });
+    return groups;
+  }
+  function renderKochStage(){
+    function slot(tok, isCurrent){
+      if (!tok) return '<div class="live-slot"><span class="ltr">·</span></div>';
+      if (tok.type === 'pause') return '<div class="live-slot' + (isCurrent?' current':'') + '"><span class="ltr">—</span></div>';
+      var pattern = patternFor(tok).replace(/\s+/g,' ');
+      return '<div class="live-slot' + (isCurrent?' current':'') + '"><span class="ltr">' + tok.value + '</span>' +
+        (state.showMorse ? '<span class="pat">' + dotDash(pattern) + '</span>' : '') + '</div>';
+    }
+    kochStage.innerHTML = slot(kochWindow.prev,false) + slot(kochWindow.current,true) + slot(kochWindow.next,false);
+  }
+
+  function startKoch(){
+    kochConfigPanel.hidden = true;
+    kochLivePanel.hidden = false;
+    kochStartBtn.disabled = true;
+    kochPauseBtn.disabled = false;
+    kochEndBtn.disabled = false;
+    kochPaused = false;
+    kochPauseBtn.textContent = 'Pause';
+    var groups = buildKochGroups();
+    var total = groups.length;
+    var doneCount = 0;
+    kochWindow = { prev:null, current:groups[0], next:groups[1] };
+    renderKochStage();
+    kochStatus.innerHTML = '<strong>Running</strong> · ' + state.wpm + ' WPM · Farnsworth ' + state.farnsworth + ' WPM · Group 1 of ' + total;
+    kochSession = runSession(groups, {
+      onTokenStart:function(mark, idx){
+        doneCount = idx + 1;
+        kochWindow.prev = kochWindow.current;
+        kochWindow.current = groups[idx];
+        kochWindow.next = groups[idx+1] || null;
+        renderKochStage();
+        kochStatus.innerHTML = '<strong>Running</strong> · ' + state.wpm + ' WPM · Farnsworth ' + state.farnsworth + ' WPM · Group ' + doneCount + ' of ' + total;
+      },
+      onComplete:function(){ endKoch(true); }
+    });
+  }
+  function endKoch(finished){
+    if (kochSession){ kochSession.stop(); kochSession = null; }
+    kochConfigPanel.hidden = false;
+    kochLivePanel.hidden = true;
+    kochStartBtn.disabled = false;
+    kochPauseBtn.disabled = true;
+    kochEndBtn.disabled = true;
+    kochStatus.textContent = finished ? 'Session complete' : 'Stopped';
+  }
+  kochStartBtn.addEventListener('click', startKoch);
+  kochPauseBtn.addEventListener('click', function(){
+    if (!kochSession) return;
+    if (!kochPaused){ kochSession.suspend(); kochPaused = true; kochPauseBtn.textContent = 'Resume'; }
+    else { kochSession.resume(); kochPaused = false; kochPauseBtn.textContent = 'Pause'; }
+  });
+  kochEndBtn.addEventListener('click', function(){ endKoch(false); });
+
+  // ---------------- GAME ----------------
+  var GAME_MODES = [
+    { id:'1', label:'1 CHAR', len:1 },
+    { id:'2', label:'2 CHAR', len:2 },
+    { id:'3', label:'3 CHAR', len:3 },
+    { id:'word', label:'WORD 5', len:5 }
+  ];
+  var gameMode = '1';
+  var gameModeRow = document.getElementById('gameModeRow');
+  gameModeRow.innerHTML = GAME_MODES.map(function(m){
+    return '<button type="button" class="mode-btn" data-mode="' + m.id + '" aria-pressed="' + (m.id===gameMode) + '">' + m.label + '</button>';
+  }).join('');
+  gameModeRow.addEventListener('click', function(e){
+    var btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    gameMode = btn.dataset.mode;
+    gameModeRow.querySelectorAll('.mode-btn').forEach(function(b){ b.setAttribute('aria-pressed', b===btn); });
+  });
+
+  var gameGrid = document.getElementById('gameGrid');
+  var scoreCorrectEl = document.getElementById('scoreCorrect');
+  var scoreErrorEl = document.getElementById('scoreError');
+  var gameCards = [];
+  var flipped = [];
+  var scoreCorrect = 0, scoreError = 0;
+  var gameLocked = false;
+  var gameSession = null;
+  var gameTimer = null;
+
+  function gameTokenPool(){
+    var mode = GAME_MODES.find(function(m){ return m.id === gameMode; });
+    if (mode.id === 'word') return WORDS.filter(function(w){ return w.length === 5; });
+    var pool = LETTERS.concat(DIGITS);
+    return null; // handled separately for random-length groups below
+  }
+  function dealGame(){
+    if (gameSession){ gameSession.stop(); gameSession = null; }
+    if (gameTimer){ window.clearTimeout(gameTimer); gameTimer = null; }
+    var mode = GAME_MODES.find(function(m){ return m.id === gameMode; });
+    var values = [];
+    if (mode.id === 'word'){
+      var words = WORDS.filter(function(w){ return w.length === 5; });
+      var shuffled = words.slice().sort(function(){ return Math.random()-0.5; });
+      values = shuffled.slice(0, 6);
+    } else {
+      var pool = LETTERS.concat(DIGITS);
+      var seen = {};
+      while (values.length < 6){
+        var v = '';
+        for (var i=0;i<mode.len;i++) v += pool[Math.floor(Math.random()*pool.length)];
+        if (!seen[v]){ seen[v] = true; values.push(v); }
+      }
+    }
+    var deck = values.concat(values).map(function(v,i){ return { id:i, value:v, solved:false }; });
+    deck.sort(function(){ return Math.random()-0.5; });
+    gameCards = deck;
+    flipped = [];
+    gameLocked = false;
+    scoreCorrect = 0; scoreError = 0;
+    scoreCorrectEl.textContent = '0'; scoreErrorEl.textContent = '0';
+    renderGame();
+  }
+  function renderGame(){
+    gameGrid.innerHTML = gameCards.map(function(c){
+      var isFlipped = flipped.indexOf(c.id) !== -1 || c.solved;
+      var pattern = c.value.split('').map(function(ch){ return MORSE[ch]||''; }).join(' ');
+      return '<div class="card' + (isFlipped?' flipped':'') + (c.solved?' solved':'') + '" data-id="' + c.id + '">' +
+        '<div class="back"></div>' +
+        '<div class="front"><span class="tok">' + c.value + '</span><span class="pat">' + dotDash(pattern) + '</span></div>' +
+        '</div>';
+    }).join('');
+  }
+  gameGrid.addEventListener('click', function(e){
+    var cardEl = e.target.closest('.card');
+    if (!cardEl || gameLocked) return;
+    var id = parseInt(cardEl.dataset.id,10);
+    var card = gameCards.find(function(c){ return c.id === id; });
+    if (!card || card.solved || flipped.indexOf(id) !== -1) return;
+    flipped.push(id);
+    renderGame();
+    // Lock the board until this card's Morse has finished, so sounds never overlap
+    // and a pair is only judged after the second card has been heard in full.
+    gameLocked = true;
+    gameSession = runSession([{ type:'char', value:card.value }], {
+      onTokenStart:function(){},
+      onComplete:function(){
+        gameSession = null;
+        if (flipped.length < 2){ gameLocked = false; return; }
+        var a = gameCards.find(function(c){ return c.id === flipped[0]; });
+        var b = gameCards.find(function(c){ return c.id === flipped[1]; });
+        gameTimer = window.setTimeout(function(){
+          gameTimer = null;
+          if (a.value === b.value){
+            a.solved = true; b.solved = true;
+            scoreCorrect++; scoreCorrectEl.textContent = String(scoreCorrect);
+          } else {
+            scoreError++; scoreErrorEl.textContent = String(scoreError);
+          }
+          flipped = [];
+          gameLocked = false;
+          renderGame();
+        }, 600);
+      }
+    });
+  });
+  document.getElementById('gameDealBtn').addEventListener('click', dealGame);
+  dealGame();
+
+  // ---------------- GENERATOR ----------------
+  var genInput = document.getElementById('genInput');
+  var genDisplay = document.getElementById('genDisplay');
+  var genPlayBtn = document.getElementById('genPlayBtn');
+  var genClearBtn = document.getElementById('genClearBtn');
+  var genSession = null;
+
+  function parseGenWords(text){
+    return text.toUpperCase().trim().split(/\s+/).filter(Boolean).map(function(w){
+      return w.split('').filter(function(ch){ return MORSE[ch]; }).join('');
+    }).filter(function(w){ return w.length > 0; });
+  }
+  function renderGenDisplay(words){
+    if (!words.length){
+      genDisplay.innerHTML = '<span style="color:var(--muted-2);font-size:13px">Your sentence will appear here, letter by letter.</span>';
+      return;
+    }
+    genDisplay.innerHTML = words.map(function(w, wi){
+      return '<div class="gen-word">' + w.split('').map(function(ch, li){
+        var pattern = MORSE[ch] || '';
+        return '<div class="gen-letter" data-w="' + wi + '" data-l="' + li + '"><span class="ltr">' + ch + '</span>' +
+          (state.showMorse ? '<span class="pat">' + dotDash(pattern) + '</span>' : '') + '</div>';
+      }).join('') + '</div>';
+    }).join('');
+  }
+  function stopGen(){
+    if (genSession){ genSession.stop(); genSession = null; }
+    genPlayBtn.textContent = 'Play';
+    genPlayBtn.dataset.playing = 'false';
+    genDisplay.querySelectorAll('.gen-letter').forEach(function(el){ el.classList.remove('current'); });
+  }
+  function playGen(){
+    var words = parseGenWords(genInput.value);
+    if (!words.length) return;
+    renderGenDisplay(words);
+    genPlayBtn.textContent = 'Stop';
+    genPlayBtn.dataset.playing = 'true';
+    genSession = runSession(words.map(function(w){ return { type:'char', value:w }; }), {
+      onLetterStart: function(mark){
+        genDisplay.querySelectorAll('.gen-letter').forEach(function(el){ el.classList.remove('current'); });
+        var sel = genDisplay.querySelector('.gen-letter[data-w="' + mark.tokenIndex + '"][data-l="' + mark.letterIndex + '"]');
+        if (sel) sel.classList.add('current', 'played');
+      },
+      onComplete: function(){
+        genPlayBtn.textContent = 'Play';
+        genPlayBtn.dataset.playing = 'false';
+        genDisplay.querySelectorAll('.gen-letter').forEach(function(el){ el.classList.remove('current'); });
+      }
+    });
+  }
+  genPlayBtn.dataset.playing = 'false';
+  genPlayBtn.addEventListener('click', function(){
+    if (genPlayBtn.dataset.playing === 'true') stopGen(); else playGen();
+  });
+  genClearBtn.addEventListener('click', function(){ genInput.value = ''; stopGen(); renderGenDisplay([]); });
+  genInput.addEventListener('input', function(){ if (genPlayBtn.dataset.playing !== 'true') renderGenDisplay(parseGenWords(genInput.value)); });
+  renderGenDisplay([]);
+
+  // ---------------- Init ----------------
+  switchView('cw');
+})();
+</script>
